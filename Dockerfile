@@ -1,4 +1,4 @@
-FROM registry:2.5
+FROM registry:latest
 
 WORKDIR /app
 

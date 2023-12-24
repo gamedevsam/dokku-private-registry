@@ -6,36 +6,36 @@ Private registry server deployed as a dokku app with HTTP Basic auth using
 ## Setup
 
 ```bash
-dokku apps:create my-registry
-dokku config:set my-registry REGISTRY_HTTP_SECRET=$(openssl rand -hex 64)
-dokku config:set my-registry AUTH_USER=user AUTH_PASSWORD=$(openssl rand -hex 16)
-dokku storage:mount my-registry /var/lib/dokku/data/storage/my-registry:/var/lib/registry
-dokku ps:set-restart-policy my-registry unless-stopped
-dokku domains:add my-registry my-registry.example.com
-dokku letsencrypt my-registry
+dokku apps:create docker-registry
+dokku config:set docker-registry REGISTRY_HTTP_SECRET=$(openssl rand -hex 64)
+dokku config:set docker-registry AUTH_USER=user AUTH_PASSWORD=$(openssl rand -hex 16)
+dokku storage:mount docker-registry /var/lib/dokku/data/storage/docker-registry:/var/lib/registry
+dokku ps:set-restart-policy docker-registry unless-stopped
+dokku domains:add docker-registry docker-registry.example.com
+dokku letsencrypt docker-registry
 ```
 
 ## Deploy
 
 ```bash
-git remote add dokku dokku@dokku.example.com:my-registry
+git remote add dokku dokku@dokku.example.com:docker-registry
 git push dokku master
 ```
 
 ## Test
 
 ```bash
-docker login -u user -p password my-registry.example.com
+docker login -u user -p password docker-registry.example.com
 
 docker pull busybox:latest
-docker tag busybox:latest my-registry.example.com/user/busybox:latest
-docker push my-registry.example.com/user/busybox:latest
-docker rmi busybox:latest my-registry.example.com/user/busybox:latest
-docker pull my-registry.example.com/user/busybox:latest
+docker tag busybox:latest docker-registry.example.com/user/busybox:latest
+docker push docker-registry.example.com/user/busybox:latest
+docker rmi busybox:latest docker-registry.example.com/user/busybox:latest
+docker pull docker-registry.example.com/user/busybox:latest
 ```
 
 ## Garbage Collect
 
 ```bash
-dokku run my-registry /bin/registry garbage-collect /app/config.yml
+dokku run docker-registry /bin/registry garbage-collect /app/config.yml
 ```
